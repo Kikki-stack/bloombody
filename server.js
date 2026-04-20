@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const os = require('os');
 const { initDatabase } = require('./database');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
@@ -10,6 +11,21 @@ const checkinRoutes = require('./routes/checkins');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
+
+function getLanUrls(port) {
+  const interfaces = os.networkInterfaces();
+  const urls = [];
+
+  Object.values(interfaces).forEach(entries => {
+    (entries || []).forEach(entry => {
+      if (entry && entry.family === 'IPv4' && !entry.internal) {
+        urls.push(`http://${entry.address}:${port}`);
+      }
+    });
+  });
+
+  return Array.from(new Set(urls));
+}
 
 initDatabase();
 
@@ -33,10 +49,16 @@ app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 
 app.get('/meals', (req, res) => res.sendFile(path.join(__dirname, 'public', 'meals.html')));
 app.get('/workout', (req, res) => res.sendFile(path.join(__dirname, 'public', 'workout.html')));
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
+  const lanUrls = getLanUrls(PORT);
+
   console.log('\n==========================================');
   console.log('  Fitness App is running!');
   console.log(`  Open your browser at: http://localhost:${PORT}`);
+  if (lanUrls.length) {
+    console.log('  Phone (same Wi-Fi) URLs:');
+    lanUrls.forEach(url => console.log(`    ${url}`));
+  }
   console.log('==========================================\n');
 });
 
