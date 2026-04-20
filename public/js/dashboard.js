@@ -76,6 +76,13 @@ function renderProfileDisplay() {
     motivated: 'Motivated',
     push_my_limits: 'Push my limits'
   };
+  const activityMap = {
+    sedentary: 'Sedentary',
+    lightly_active: 'Lightly active',
+    moderately_active: 'Moderately active',
+    active: 'Active',
+    very_active: 'Very active'
+  };
 
   document.getElementById('profileDisplay').innerHTML = `
     <div>
@@ -94,6 +101,7 @@ function renderProfileDisplay() {
       <div style="display:grid; gap:8px;">
         ${profileItem('Fitness Level', d.fitness_level || '—')}
         ${profileItem('Intensity Level', intensityMap[d.intensity_level] || d.intensity_level || '—')}
+        ${profileItem('Activity Level', activityMap[d.activity_level] || d.activity_level || '—')}
         ${profileItem('Days/Week', d.days_per_week ? d.days_per_week + ' days' : '—')}
         ${profileItem('Equipment', d.equipment || '—')}
         ${profileItem('Target Muscles', targetMuscles.length ? targetMuscles.join(', ') : '—')}
@@ -131,6 +139,7 @@ function populateProfileForm() {
   if (d.measurement_unit) document.getElementById('pMeasurementUnit').value = d.measurement_unit;
   if (d.fitness_level) document.getElementById('pFitnessLevel').value = d.fitness_level;
   if (d.intensity_level) document.getElementById('pIntensityLevel').value = d.intensity_level;
+  if (d.activity_level) document.getElementById('pActivityLevel').value = d.activity_level;
   if (d.days_per_week) document.getElementById('pDays').value = d.days_per_week;
   if (d.equipment) document.getElementById('pEquipment').value = d.equipment;
   if (d.body_pains) document.getElementById('pBodyPains').value = d.body_pains;
@@ -167,6 +176,10 @@ function calculateCalories() {
   const height = parseFloat(document.getElementById('pHeight').value);
   const heightUnit = document.getElementById('pHeightUnit').value;
   const gender = document.getElementById('pGender').value;
+  const goalType = document.getElementById('pGoal').value;
+  const activityLevel = document.getElementById('pActivityLevel').value;
+  const intensityLevel = document.getElementById('pIntensityLevel').value;
+  const fitnessLevel = document.getElementById('pFitnessLevel').value;
   const days = parseInt(document.getElementById('pDays').value) || 3;
 
   if (!age || !weight || !height || !gender) {
@@ -183,15 +196,53 @@ function calculateCalories() {
   if (gender === 'male') bmr = 10 * weightKg + 6.25 * heightCm - 5 * age + 5;
   else bmr = 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
 
-  // Activity factor
-  const activityMap = { 2: 1.25, 3: 1.375, 4: 1.46, 5: 1.55, 6: 1.65 };
-  const factor = activityMap[days] || 1.375;
-  const tdee = Math.round(bmr * factor);
+  // Baseline movement outside workouts
+  const activityFactorMap = {
+    sedentary: 1.2,
+    lightly_active: 1.375,
+    moderately_active: 1.55,
+    active: 1.725,
+    very_active: 1.9
+  };
+  const activityFactor = activityFactorMap[activityLevel] || 1.2;
 
-  // 500 kcal deficit for weight loss
-  const goal = Math.max(1200, tdee - 500);
-  document.getElementById('pCalories').value = goal;
-  showMsg('profileSuccess', `Calculated! TDEE: ~${tdee} kcal. Suggested deficit target: ${goal} kcal/day for steady weight loss.`);
+  // Workout burn estimate from planned schedule + intensity
+  const burnPerWorkoutByIntensity = {
+    unmotivated: 120,
+    light: 180,
+    standard: 250,
+    motivated: 320,
+    push_my_limits: 400
+  };
+  const fitnessBurnMultiplier = {
+    beginner: 0.9,
+    intermediate: 1.0,
+    advanced: 1.1
+  };
+
+  const workoutBurnPerSession = (burnPerWorkoutByIntensity[intensityLevel] || 250) * (fitnessBurnMultiplier[fitnessLevel] || 1);
+  const weeklyWorkoutBurn = Math.round(workoutBurnPerSession * days);
+  const dailyWorkoutBurn = weeklyWorkoutBurn / 7;
+
+  const maintenanceBase = bmr * activityFactor;
+  const maintenanceWithTraining = maintenanceBase + dailyWorkoutBurn;
+
+  let targetCalories = maintenanceWithTraining;
+  if ((goalType || '').includes('weight loss')) {
+    const requestedDeficit = goalType.includes('muscle building') ? 250 : 400;
+    const safeDeficitCap = Math.round(maintenanceWithTraining * 0.18);
+    const deficit = Math.min(requestedDeficit, safeDeficitCap);
+    targetCalories = maintenanceWithTraining - deficit;
+  }
+
+  const minByGender = gender === 'male' ? 1500 : gender === 'female' ? 1300 : 1400;
+  const finalTarget = Math.max(minByGender, Math.min(5000, Math.round(targetCalories)));
+
+  document.getElementById('pCalories').value = finalTarget;
+  showMsg(
+    'profileSuccess',
+    `Calculated! BMR: ~${Math.round(bmr)} kcal/day, base maintenance: ~${Math.round(maintenanceBase)} kcal/day, estimated workout burn: ~${weeklyWorkoutBurn} kcal/week. Suggested daily target: ${finalTarget} kcal/day.`
+  );
 }
 
 function showMsg(id, msg) {
@@ -231,6 +282,7 @@ async function saveProfile() {
     target_muscle_groups: targetMuscles,
     fitness_level: document.getElementById('pFitnessLevel').value,
     intensity_level: document.getElementById('pIntensityLevel').value,
+    activity_level: document.getElementById('pActivityLevel').value,
     days_per_week: parseInt(document.getElementById('pDays').value),
     equipment: document.getElementById('pEquipment').value,
     calorie_goal: parseInt(document.getElementById('pCalories').value) || 2000,

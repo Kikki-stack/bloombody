@@ -190,13 +190,6 @@
                 <option value="endurance and cardio">Endurance & Cardio</option>
               </select>
             </div>
-            <div class="form-group">
-              <label>Daily Calorie Goal <small style="color:var(--text-muted); font-weight:400;">(auto-calculated or set manually)</small></label>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input type="number" id="pCalories" placeholder="e.g. 1800" min="1000" max="5000" style="flex:1;">
-                <button class="btn btn-secondary btn-sm" onclick="calculateCalories()" title="Auto-calculate based on your stats">Auto</button>
-              </div>
-            </div>
           </div>
 
           <div class="form-section">
@@ -262,6 +255,16 @@
                 </select>
               </div>
               <div class="form-group">
+                <label>Current Activity Level</label>
+                <select id="pActivityLevel">
+                  <option value="sedentary">Sedentary (little to no daily movement)</option>
+                  <option value="lightly_active">Lightly active (light activity 1-3 days/week)</option>
+                  <option value="moderately_active">Moderately active (moderate activity most days)</option>
+                  <option value="active">Active (high daily movement + regular training)</option>
+                  <option value="very_active">Very active (physically demanding lifestyle)</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label>Workout Days Per Week</label>
                 <select id="pDays">
                   <option value="2">2 days</option>
@@ -296,6 +299,17 @@
                 <label class="checkbox-item"><input type="checkbox" value="cardio" class="target-muscle-check"> Cardio</label>
                 <label class="checkbox-item"><input type="checkbox" value="back" class="target-muscle-check"> Back</label>
                 <label class="checkbox-item"><input type="checkbox" value="core" class="target-muscle-check"> Core</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">🔥 Daily Calorie Target (Final Step)</div>
+            <div class="form-group">
+              <label>Daily Calorie Goal <small style="color:var(--text-muted); font-weight:400;">(includes your activity level + estimated weekly workout burn)</small></label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="number" id="pCalories" placeholder="e.g. 1900" min="1000" max="5000" style="flex:1;">
+                <button class="btn btn-secondary btn-sm" onclick="calculateCalories()" title="Auto-calculate based on full profile">Auto</button>
               </div>
             </div>
           </div>
