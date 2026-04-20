@@ -1,0 +1,15 @@
+{
+  "name": "fitness-app",
+  "version": "1.0.0",
+  "description": "Personal Fitness & Meal Planning App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "@google/generative-ai": "^0.21.0",
+    "express-session": "^1.17.3"
+  }
+}

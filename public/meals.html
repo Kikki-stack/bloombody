@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife - Meal Planner</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-layout">
+
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-name">🏋️ FitLife</div>
+      <div class="logo-tag">Weight Loss Journey</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-link">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="/meals" class="nav-link active">
+        <span class="nav-icon">🥗</span> Meal Planner
+      </a>
+      <a href="/workout" class="nav-link">
+        <span class="nav-icon">💪</span> Workout Planner
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+        <div>
+          <div class="sidebar-user-name" id="sidebarUsername">Loading...</div>
+          <div class="sidebar-user-label">FitLife Member</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>🥗 Meal Planner</h1>
+      <p>Generate personalised meal plans with grocery lists and full nutrition info</p>
+    </div>
+
+    <div class="page-body">
+      <!-- Generate Panel -->
+      <div class="generate-panel">
+        <h3>Generate New Meal Plan</h3>
+        <div class="form-row" style="margin-bottom:16px;">
+          <div class="form-group" style="margin:0;">
+            <label>Plan Duration</label>
+            <select id="mealWeeks">
+              <option value="1">1 Week</option>
+              <option value="2">2 Weeks</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label>Extra Preferences <small style="color:var(--text-muted); font-weight:400;">(optional)</small></label>
+            <input type="text" id="mealExtraPrefs" placeholder="e.g. I love spicy food, avoid heavy dinners">
+          </div>
+        </div>
+        <div class="form-group" style="margin:0 0 16px 0; max-width:300px;">
+          <label>Measurement Unit</label>
+          <select id="mealMeasurementUnit" onchange="onMeasurementUnitChange()">
+            <option value="grams">Grams / ml (EU style)</option>
+            <option value="cups">Cups / tbsp / tsp</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="generateMealPlan()">✨ Generate Meal Plan</button>
+          <button class="btn btn-secondary" onclick="loadCurrentPlan()">📋 Load Last Plan</button>
+          <span style="font-size:12px; color:var(--text-muted);">Generation takes ~20-40 seconds. You can switch units anytime.</span>
+        </div>
+      </div>
+
+      <!-- Meal Plan Display -->
+      <div id="mealPlanArea" style="display:none;">
+        <!-- Week Tabs -->
+        <div class="tab-nav" id="weekTabNav"></div>
+
+        <!-- Week Content -->
+        <div id="weekContent"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🥗</div>
+        <div class="empty-title">No meal plan yet</div>
+        <div class="empty-desc">
+          Click "Generate Meal Plan" above to create your personalised weekly meal plan complete with breakfast, lunch, dinner, snacks, a grocery list, and nutritional information.
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">
+          💡 Make sure your profile is set up for the most personalised results
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Generating your personalised meal plan...</div>
+    <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">This may take up to 40 seconds</div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/meals.js"></script>
+</body>
+</html>

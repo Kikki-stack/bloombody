@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife - Workout Planner</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-layout">
+
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-name">🏋️ FitLife</div>
+      <div class="logo-tag">Weight Loss Journey</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-link">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="/meals" class="nav-link">
+        <span class="nav-icon">🥗</span> Meal Planner
+      </a>
+      <a href="/workout" class="nav-link active">
+        <span class="nav-icon">💪</span> Workout Planner
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+        <div>
+          <div class="sidebar-user-name" id="sidebarUsername">Loading...</div>
+          <div class="sidebar-user-label">FitLife Member</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>💪 Workout Planner</h1>
+      <p>Your personalised 4-week workout plan with built-in timer and progress tracking</p>
+    </div>
+
+    <div class="page-body">
+      <!-- Generate Panel -->
+      <div class="generate-panel" id="generatePanel">
+        <h3>Generate New 4-Week Plan</h3>
+        <div class="form-row" style="margin-bottom:16px;">
+          <div class="form-group" style="margin:0;">
+            <label>Priority Muscle Group</label>
+            <select id="focusMuscle">
+              <option value="balanced full body">Balanced Full Body</option>
+              <option value="legs and glutes">Legs & Glutes</option>
+              <option value="upper body and arms">Upper Body & Arms</option>
+              <option value="core and abs">Core & Abs</option>
+              <option value="cardio and endurance">Cardio & Endurance</option>
+              <option value="back and shoulders">Back & Shoulders</option>
+              <option value="chest and triceps">Chest & Triceps</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label>Additional Notes <small style="color:var(--text-muted); font-weight:400;">(optional)</small></label>
+            <input type="text" id="workoutNotes" placeholder="e.g. I prefer morning workouts, no jumping exercises">
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="generateWorkoutPlan()">✨ Generate Workout Plan</button>
+          <button class="btn btn-secondary" onclick="loadCurrentPlan()">📋 Load Current Plan</button>
+          <span style="font-size:12px; color:var(--text-muted);">Generation takes ~20-40 seconds. Intensity comes from your profile (Dashboard).</span>
+        </div>
+      </div>
+
+      <!-- Monthly Checkup Banner -->
+      <div id="checkupBanner" style="display:none;" class="checkup-banner">
+        <h3>🎉 Monthly Plan Completed!</h3>
+        <p style="margin-bottom:14px;">Great work finishing your workout plan! It's time for your monthly checkup to get a new, upgraded plan.</p>
+        <button class="btn btn-primary" onclick="showCheckupModal()">Start Monthly Checkup</button>
+      </div>
+
+      <div id="weeklyCheckinCard" class="card" style="display:none; margin-bottom:24px;">
+        <div class="card-header">
+          <h2>📅 Weekly Check-In</h2>
+          <span class="badge badge-blue">Meals + Workouts</span>
+        </div>
+        <div class="card-body">
+          <div class="form-row" style="margin-bottom:12px;">
+            <div class="form-group" style="margin:0; max-width:240px;">
+              <label>Week</label>
+              <select id="weeklyCheckinWeek" onchange="loadWeeklyCheckinStatus()"></select>
+            </div>
+          </div>
+
+          <div id="weeklyCheckinStatus" style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;"></div>
+
+          <div class="form-group" style="margin-bottom:10px;">
+            <label>Workout Feedback</label>
+            <textarea id="weeklyWorkoutFeedback" placeholder="How did your workouts feel this week?"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label>Meal Feedback</label>
+            <textarea id="weeklyMealFeedback" placeholder="How did your meals feel this week? Hunger, cravings, energy, etc."></textarea>
+          </div>
+
+          <button class="btn btn-primary" id="weeklyCheckinBtn" onclick="submitWeeklyCheckin()">Run Weekly Check-In</button>
+
+          <div id="weeklyCheckinResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+
+      <!-- Plan Overview -->
+      <div id="planOverview" style="display:none; margin-bottom:24px;">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 id="planName">My Workout Plan</h2>
+              <p id="planOverviewText" style="font-size:13px; color:var(--text-secondary); margin-top:4px;"></p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span id="planProgressBadge" class="badge badge-blue"></span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:12px;">
+              <div class="progress-label">
+                <span>Monthly Progress</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill green" id="progressFill" style="width:0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week Tabs + Content -->
+      <div id="workoutPlanArea" style="display:none;">
+        <div class="tab-nav" id="weekTabNav"></div>
+        <div id="weekContent"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">💪</div>
+        <div class="empty-title">No workout plan yet</div>
+        <div class="empty-desc">
+          Generate your personalised 4-week workout plan. It will be tailored to your fitness level, available equipment, and any injuries or pain areas you have.
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">
+          💡 Set up your profile first for the best personalised results
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Workout Detail Modal -->
+  <div class="modal-overlay" id="workoutModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Workout</h2>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Monthly Checkup Modal -->
+  <div class="modal-overlay" id="checkupModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🎯 Monthly Checkup</h2>
+        <button class="modal-close" onclick="closeCheckupModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">
+          Tell us how your month went so we can create a better plan for next month.
+        </p>
+        <div class="form-group">
+          <label>How did the workouts feel overall?</label>
+          <textarea id="checkupFeedback" placeholder="e.g. The workouts were great but I found the push exercises too hard. I enjoyed the leg days." style="min-height:100px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label>New Priority Muscle Group</label>
+          <select id="checkupFocus">
+            <option value="">Keep the same</option>
+            <option value="balanced full body">Balanced Full Body</option>
+            <option value="legs and glutes">Legs & Glutes</option>
+            <option value="upper body and arms">Upper Body & Arms</option>
+            <option value="core and abs">Core & Abs</option>
+            <option value="cardio and endurance">Cardio & Endurance</option>
+            <option value="back and shoulders">Back & Shoulders</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Difficulty Adjustment</label>
+          <select id="checkupDifficulty">
+            <option value="keep the same difficulty">Keep the same difficulty</option>
+            <option value="make it harder, I am ready to push more">Make it harder - I'm ready!</option>
+            <option value="make it slightly easier, I am still getting used to it">Make it slightly easier</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="submitCheckup()">Generate New Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timer Overlay -->
+  <div class="timer-overlay" id="timerOverlay">
+    <div id="timerExerciseCounter" style="font-size:13px; color:#64748b; margin-bottom:8px;"></div>
+    <div class="timer-exercise-name" id="timerExerciseName">Exercise Name</div>
+    <div class="timer-set-info" id="timerSetInfo">Set 1 of 3 — Rep 1 of 10</div>
+
+    <div class="timer-ring-wrap">
+      <svg class="timer-ring" viewBox="0 0 220 220">
+        <circle class="timer-ring-bg" cx="110" cy="110" r="100"/>
+        <circle class="timer-ring-progress" id="timerRingProgress" cx="110" cy="110" r="100"/>
+      </svg>
+      <div class="timer-display">
+        <div class="timer-time" id="timerTime">1:00</div>
+        <div class="timer-phase active-phase" id="timerPhase">EXERCISE</div>
+      </div>
+    </div>
+
+    <div class="timer-exercise-desc" id="timerExerciseDesc"></div>
+
+    <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; justify-content:center;">
+      <span id="timerModEasier" class="mod-tag mod-easier" style="cursor:pointer;" title="Click for easier modification"></span>
+      <span id="timerModHarder" class="mod-tag mod-harder" style="cursor:pointer;" title="Click for harder modification"></span>
+    </div>
+
+    <div class="timer-controls">
+      <button class="timer-btn timer-btn-start" id="timerStartBtn" onclick="toggleTimer()">▶ Start</button>
+      <button class="timer-btn timer-btn-skip" onclick="skipPhase()">Skip ⏭</button>
+      <button class="timer-btn timer-btn-quit" onclick="quitWorkout()">✕ Quit</button>
+    </div>
+
+    <div style="width:100%; max-width:500px;">
+      <div class="progress-label">
+        <span style="color:#94a3b8; font-size:13px;">Overall workout progress</span>
+        <span id="timerOverallProgress" style="color:#94a3b8; font-size:13px;"></span>
+      </div>
+      <div class="timer-progress-bar">
+        <div class="timer-progress-fill" id="timerProgressFill" style="width:0%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Generating your workout plan...</div>
+    <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">This may take up to 40 seconds</div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/workout.js"></script>
+</body>
+</html>

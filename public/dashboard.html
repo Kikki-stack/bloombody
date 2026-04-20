@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife - Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-layout">
+
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-name">🏋️ FitLife</div>
+      <div class="logo-tag">Weight Loss Journey</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-link active">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="/meals" class="nav-link">
+        <span class="nav-icon">🥗</span> Meal Planner
+      </a>
+      <a href="/workout" class="nav-link">
+        <span class="nav-icon">💪</span> Workout Planner
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+        <div>
+          <div class="sidebar-user-name" id="sidebarUsername">Loading...</div>
+          <div class="sidebar-user-label">FitLife Member</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 id="welcomeTitle">Welcome back! 👋</h1>
+      <p>Track your progress and manage your fitness goals</p>
+    </div>
+
+    <div class="page-body">
+      <!-- Stats Overview -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon green">🎯</div>
+          <div>
+            <div class="stat-value" id="statCalories">—</div>
+            <div class="stat-label">Daily Calorie Goal</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">📋</div>
+          <div>
+            <div class="stat-value" id="statMealPlans">—</div>
+            <div class="stat-label">Meal Plans Created</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber">💪</div>
+          <div>
+            <div class="stat-value" id="statWorkouts">—</div>
+            <div class="stat-label">Workouts Completed</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">⚡</div>
+          <div>
+            <div class="stat-value" id="statLevel">—</div>
+            <div class="stat-label">Fitness Level</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Setup -->
+      <div class="card" id="profileSetupBanner" style="display:none; margin-bottom:24px;">
+        <div class="card-header">
+          <h2>👤 Complete Your Profile</h2>
+          <span class="badge badge-amber">Required</span>
+        </div>
+        <div class="card-body">
+          <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">
+            Set up your profile so we can personalise your meal plans and workouts to your specific needs.
+          </p>
+          <button class="btn btn-primary" onclick="showProfileForm()">Set Up Profile</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="form-row" style="margin-bottom:24px;" id="quickActions">
+        <div class="card" style="padding:24px; cursor:pointer;" onclick="window.location.href='/meals'">
+          <div style="font-size:32px; margin-bottom:12px;">🥗</div>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:6px;">Meal Planner</h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Generate personalised weekly meal plans with grocery lists and nutrition info.</p>
+          <span class="badge badge-green">Up to 2 Weeks</span>
+        </div>
+        <div class="card" style="padding:24px; cursor:pointer;" onclick="window.location.href='/workout'">
+          <div style="font-size:32px; margin-bottom:12px;">💪</div>
+          <h3 style="font-size:16px; font-weight:700; margin-bottom:6px;">Workout Planner</h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Get a full 4-week workout plan with built-in timer, progress tracking, and monthly checkups.</p>
+          <span class="badge badge-blue">4-Week Plan</span>
+        </div>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="card" id="profileCard" style="display:none; margin-bottom:24px;">
+        <div class="card-header">
+          <h2>👤 Your Profile</h2>
+          <button class="btn btn-secondary btn-sm" onclick="showProfileForm()">Edit Profile</button>
+        </div>
+        <div class="card-body">
+          <div class="form-row" id="profileDisplay"></div>
+        </div>
+      </div>
+
+      <!-- Profile Edit Form -->
+      <div class="card" id="profileFormCard" style="display:none; margin-bottom:24px;">
+        <div class="card-header">
+          <h2>👤 Your Profile</h2>
+          <button class="btn btn-secondary btn-sm" onclick="hideProfileForm()">Cancel</button>
+        </div>
+        <div class="card-body">
+          <div id="profileError" class="error-msg"></div>
+          <div id="profileSuccess" class="success-msg"></div>
+
+          <div class="form-section">
+            <div class="form-section-title">👤 Personal Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Age</label>
+                <input type="number" id="pAge" placeholder="e.g. 25" min="10" max="100">
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select id="pGender">
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other / Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Weight</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="number" id="pWeight" placeholder="e.g. 75" min="30" max="300" style="flex:1;">
+                  <select id="pWeightUnit" style="width:70px;">
+                    <option value="kg">kg</option>
+                    <option value="lbs">lbs</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Height</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="number" id="pHeight" placeholder="e.g. 175" min="100" max="250" style="flex:1;">
+                  <select id="pHeightUnit" style="width:70px;">
+                    <option value="cm">cm</option>
+                    <option value="ft">ft</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">🎯 Your Goal</div>
+            <div class="form-group">
+              <label>Primary Goal</label>
+              <select id="pGoal">
+                <option value="weight loss">Weight Loss</option>
+                <option value="weight loss and muscle building">Weight Loss + Muscle Building</option>
+                <option value="general fitness and health">General Fitness & Health</option>
+                <option value="endurance and cardio">Endurance & Cardio</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Daily Calorie Goal <small style="color:var(--text-muted); font-weight:400;">(auto-calculated or set manually)</small></label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="number" id="pCalories" placeholder="e.g. 1800" min="1000" max="5000" style="flex:1;">
+                <button class="btn btn-secondary btn-sm" onclick="calculateCalories()" title="Auto-calculate based on your stats">Auto</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">🥗 Dietary Preferences</div>
+            <div class="form-group">
+              <label>Dietary Restrictions</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" value="vegetarian" class="diet-check"> Vegetarian</label>
+                <label class="checkbox-item"><input type="checkbox" value="vegan" class="diet-check"> Vegan</label>
+                <label class="checkbox-item"><input type="checkbox" value="gluten-free" class="diet-check"> Gluten-Free</label>
+                <label class="checkbox-item"><input type="checkbox" value="dairy-free" class="diet-check"> Dairy-Free</label>
+                <label class="checkbox-item"><input type="checkbox" value="nut-free" class="diet-check"> Nut-Free</label>
+                <label class="checkbox-item"><input type="checkbox" value="low-carb" class="diet-check"> Low-Carb</label>
+                <label class="checkbox-item"><input type="checkbox" value="keto" class="diet-check"> Keto</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Halal Diet</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="pHalal">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">All meals must be strictly Halal</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Allergies</label>
+              <input type="text" id="pAllergies" placeholder="e.g. peanuts, shellfish, eggs (leave blank if none)">
+            </div>
+            <div class="form-group">
+              <label>Cuisine Preferences</label>
+              <input type="text" id="pCuisine" placeholder="e.g. Mediterranean, Asian, Middle Eastern, varied">
+            </div>
+            <div class="form-group">
+              <label>Ingredient Measurement Unit</label>
+              <select id="pMeasurementUnit">
+                <option value="grams">Grams / ml (metric)</option>
+                <option value="cups">Cups / tbsp / tsp</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">💪 Fitness Information</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fitness Level</label>
+                <select id="pFitnessLevel">
+                  <option value="beginner">Beginner (new to exercise)</option>
+                  <option value="intermediate">Intermediate (exercise 1-2 years)</option>
+                  <option value="advanced">Advanced (exercise 3+ years)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Workout Intensity / Motivation</label>
+                <select id="pIntensityLevel">
+                  <option value="unmotivated">Unmotivated (easiest, shortest sessions)</option>
+                  <option value="light">Light (gentle and manageable)</option>
+                  <option value="standard" selected>Standard (balanced)</option>
+                  <option value="motivated">Motivated (slightly more challenging)</option>
+                  <option value="push_my_limits">Push my limits (hardest)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Workout Days Per Week</label>
+                <select id="pDays">
+                  <option value="2">2 days</option>
+                  <option value="3" selected>3 days</option>
+                  <option value="4">4 days</option>
+                  <option value="5">5 days</option>
+                  <option value="6">6 days</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Available Equipment</label>
+              <select id="pEquipment">
+                <option value="none (bodyweight only)">No equipment (bodyweight only)</option>
+                <option value="resistance bands">Resistance bands</option>
+                <option value="dumbbells">Dumbbells</option>
+                <option value="dumbbells and barbell">Dumbbells & Barbell</option>
+                <option value="full gym">Full gym access</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Body Pains or Injuries <small style="color:var(--text-muted); font-weight:400;">(we'll avoid stressing these areas)</small></label>
+              <textarea id="pBodyPains" placeholder="e.g. bad knees, lower back pain, shoulder injury. Leave blank if none."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Target Muscle Groups <small style="color:var(--text-muted); font-weight:400;">(choose one or more)</small></label>
+              <div class="checkbox-group">
+                <label class="checkbox-item"><input type="checkbox" value="full body" class="target-muscle-check"> Full body</label>
+                <label class="checkbox-item"><input type="checkbox" value="glutes" class="target-muscle-check"> Glutes</label>
+                <label class="checkbox-item"><input type="checkbox" value="legs" class="target-muscle-check"> Legs</label>
+                <label class="checkbox-item"><input type="checkbox" value="shoulders" class="target-muscle-check"> Shoulders</label>
+                <label class="checkbox-item"><input type="checkbox" value="cardio" class="target-muscle-check"> Cardio</label>
+                <label class="checkbox-item"><input type="checkbox" value="back" class="target-muscle-check"> Back</label>
+                <label class="checkbox-item"><input type="checkbox" value="core" class="target-muscle-check"> Core</label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" onclick="saveProfile()">Save Profile</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
