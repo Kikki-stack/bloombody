@@ -5,6 +5,17 @@ let activeWeek = 0;
 let activeDay = 0;
 let checkedGroceries = {};
 let selectedMeasurementUnit = localStorage.getItem('fitlifeMealMeasurementUnit') || 'grams';
+let loadingProgressInterval = null;
+let loadingTipInterval = null;
+let loadingHideTimer = null;
+
+const MEAL_LOADING_TIPS = [
+  'Tip: Build meals around protein first to stay full longer.',
+  'Tip: Keep your grocery list simple to improve consistency.',
+  'Tip: High-volume foods like veggies help weight loss without excess calories.',
+  'Tip: Batch-cooking 2-3 meals can make weekday adherence easier.',
+  'Tip: Slightly imperfect consistency beats a perfect plan you cannot sustain.'
+];
 
 const ML_PER_CUP = 240;
 const GRAMS_PER_CUP_DEFAULT = 200;
@@ -575,12 +586,54 @@ function toggleCollapsible(btn) {
 }
 
 function showLoading(text) {
-  document.getElementById('loadingOverlay').classList.add('open');
-  document.getElementById('loadingText').textContent = text || 'Loading...';
+  const overlay = document.getElementById('loadingOverlay');
+  const textEl = document.getElementById('loadingText');
+  const progressFill = document.getElementById('loadingProgressFill');
+  const progressText = document.getElementById('loadingProgressText');
+  const tipEl = document.getElementById('loadingTip');
+
+  if (!overlay || !textEl) return;
+
+  clearInterval(loadingProgressInterval);
+  clearInterval(loadingTipInterval);
+  clearTimeout(loadingHideTimer);
+
+  overlay.classList.add('open');
+  textEl.textContent = text || 'Loading...';
+
+  let progress = 4;
+  if (progressFill) progressFill.style.width = `${progress}%`;
+  if (progressText) progressText.textContent = `${progress}%`;
+
+  let tipIndex = 0;
+  if (tipEl) tipEl.textContent = MEAL_LOADING_TIPS[tipIndex];
+
+  loadingTipInterval = setInterval(() => {
+    tipIndex = (tipIndex + 1) % MEAL_LOADING_TIPS.length;
+    if (tipEl) tipEl.textContent = MEAL_LOADING_TIPS[tipIndex];
+  }, 3200);
+
+  loadingProgressInterval = setInterval(() => {
+    progress = Math.min(92, progress + Math.floor(Math.random() * 6) + 2);
+    if (progressFill) progressFill.style.width = `${progress}%`;
+    if (progressText) progressText.textContent = `${progress}%`;
+  }, 700);
 }
 
 function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('open');
+  const overlay = document.getElementById('loadingOverlay');
+  const progressFill = document.getElementById('loadingProgressFill');
+  const progressText = document.getElementById('loadingProgressText');
+
+  clearInterval(loadingProgressInterval);
+  clearInterval(loadingTipInterval);
+
+  if (progressFill) progressFill.style.width = '100%';
+  if (progressText) progressText.textContent = '100%';
+
+  loadingHideTimer = setTimeout(() => {
+    if (overlay) overlay.classList.remove('open');
+  }, 180);
 }
 
 function showToast(msg, type = 'default') {

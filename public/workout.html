@@ -258,9 +258,18 @@
 
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">Generating your workout plan...</div>
-    <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">This may take up to 40 seconds</div>
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loadingText">Generating your workout plan...</div>
+      <div class="loading-progress-wrap">
+        <div class="loading-progress-bar">
+          <div class="loading-progress-fill" id="loadingProgressFill" style="width:0%;"></div>
+        </div>
+        <div class="loading-progress-text" id="loadingProgressText">0%</div>
+      </div>
+      <div class="loading-tip" id="loadingTip">Tip: Train at the easiest intensity you can do consistently. You can always increase later.</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">This may take up to 40 seconds</div>
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>

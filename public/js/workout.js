@@ -3,6 +3,18 @@
 let currentPlan = null;
 let activeWeek = 0;
 let profileIntensityLevel = 'standard';
+let loadingProgressInterval = null;
+let loadingTipInterval = null;
+let loadingHideTimer = null;
+
+const WORKOUT_LOADING_TIPS = [
+  'Tip: Your best plan is the one you can repeat every week.',
+  'Tip: Form quality matters more than intensity for long-term progress.',
+  'Tip: Low motivation days still count. Keep the streak alive.',
+  'Tip: Consistent sleep and hydration can improve workout output.',
+  'Tip: Recovery is part of training, not a break from training.'
+];
+
 const TIMER_TOTAL_SETS = 3;
 const TIMER_REPS_PER_EXERCISE = 3;
 const TIMER_REP_REST_SECONDS = 15;
@@ -740,12 +752,54 @@ async function submitCheckup() {
 }
 
 function showLoading(text) {
-  document.getElementById('loadingOverlay').classList.add('open');
-  document.getElementById('loadingText').textContent = text || 'Loading...';
+  const overlay = document.getElementById('loadingOverlay');
+  const textEl = document.getElementById('loadingText');
+  const progressFill = document.getElementById('loadingProgressFill');
+  const progressText = document.getElementById('loadingProgressText');
+  const tipEl = document.getElementById('loadingTip');
+
+  if (!overlay || !textEl) return;
+
+  clearInterval(loadingProgressInterval);
+  clearInterval(loadingTipInterval);
+  clearTimeout(loadingHideTimer);
+
+  overlay.classList.add('open');
+  textEl.textContent = text || 'Loading...';
+
+  let progress = 4;
+  if (progressFill) progressFill.style.width = `${progress}%`;
+  if (progressText) progressText.textContent = `${progress}%`;
+
+  let tipIndex = 0;
+  if (tipEl) tipEl.textContent = WORKOUT_LOADING_TIPS[tipIndex];
+
+  loadingTipInterval = setInterval(() => {
+    tipIndex = (tipIndex + 1) % WORKOUT_LOADING_TIPS.length;
+    if (tipEl) tipEl.textContent = WORKOUT_LOADING_TIPS[tipIndex];
+  }, 3200);
+
+  loadingProgressInterval = setInterval(() => {
+    progress = Math.min(92, progress + Math.floor(Math.random() * 6) + 2);
+    if (progressFill) progressFill.style.width = `${progress}%`;
+    if (progressText) progressText.textContent = `${progress}%`;
+  }, 700);
 }
 
 function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('open');
+  const overlay = document.getElementById('loadingOverlay');
+  const progressFill = document.getElementById('loadingProgressFill');
+  const progressText = document.getElementById('loadingProgressText');
+
+  clearInterval(loadingProgressInterval);
+  clearInterval(loadingTipInterval);
+
+  if (progressFill) progressFill.style.width = '100%';
+  if (progressText) progressText.textContent = '100%';
+
+  loadingHideTimer = setTimeout(() => {
+    if (overlay) overlay.classList.remove('open');
+  }, 180);
 }
 
 function showToast(msg, type = 'default') {
