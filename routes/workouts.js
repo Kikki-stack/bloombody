@@ -13,9 +13,14 @@ const {
 } = require('../database');
 
 const router = express.Router();
-const genAI = new GoogleGenerativeAI('AIzaSyD74xa0W1DwKrxoOIa45E0uVUlkg0RVdIg');
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
 const MODEL_NAME = 'gemini-2.5-flash';
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+if (!GEMINI_API_KEY) {
+  console.warn('GEMINI_API_KEY is not set. AI generation endpoints may fail.');
+}
 
 function requireAuth(req, res, next) {
   if (!req.session.userId) return res.status(401).json({ error: 'Not authenticated' });

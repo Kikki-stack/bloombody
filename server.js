@@ -11,6 +11,7 @@ const checkinRoutes = require('./routes/checkins');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
+const SESSION_SECRET = process.env.SESSION_SECRET || 'fitness-app-local-secret-2024';
 
 function getLanUrls(port) {
   const interfaces = os.networkInterfaces();
@@ -32,7 +33,7 @@ initDatabase();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'fitness-app-local-secret-2024',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
