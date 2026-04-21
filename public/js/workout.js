@@ -356,20 +356,204 @@ function getExerciseAnimationModel(exercise) {
   const muscle = String(exercise?.muscle_group || '').toLowerCase();
   const text = `${name} ${muscle}`;
 
-  if (/push|press|chest/.test(text)) return { type: 'push', emoji: '💪', label: 'Push Pattern Demo' };
-  if (/squat|leg|glute|hamstring|quad/.test(text)) return { type: 'squat', emoji: '🦵', label: 'Lower Body Demo' };
-  if (/lunge|split squat|step up/.test(text)) return { type: 'lunge', emoji: '🤸', label: 'Lunge Pattern Demo' };
-  if (/plank|core|abs|crunch|bird-dog/.test(text)) return { type: 'core', emoji: '🧘', label: 'Core Control Demo' };
-  if (/row|back|pull/.test(text)) return { type: 'back', emoji: '🏋️', label: 'Back/Pull Demo' };
-  if (/cardio|run|jog|march|jump|cycle|burpee|mountain climber/.test(text)) return { type: 'cardio', emoji: '🏃', label: 'Cardio Movement Demo' };
-  return { type: 'generic', emoji: '🏋️', label: 'Movement Demo' };
+  if (/push|press|chest/.test(text)) return { type: 'push', label: 'Push Pattern Demo' };
+  if (/squat|leg|glute|hamstring|quad/.test(text)) return { type: 'squat', label: 'Lower Body Demo' };
+  if (/lunge|split squat|step up/.test(text)) return { type: 'lunge', label: 'Lunge Pattern Demo' };
+  if (/plank|core|abs|crunch|bird-dog/.test(text)) return { type: 'core', label: 'Core Control Demo' };
+  if (/row|back|pull/.test(text)) return { type: 'back', label: 'Back/Pull Demo' };
+  if (/cardio|run|jog|march|jump|cycle|burpee|mountain climber/.test(text)) return { type: 'cardio', label: 'Cardio Movement Demo' };
+  return { type: 'generic', label: 'Movement Demo' };
+}
+
+function getExerciseAnimationSvg(type) {
+  const commonStart = `
+    <g class="figure guide">
+      <circle class="line" cx="52" cy="44" r="12" />
+      <line class="line" x1="52" y1="56" x2="52" y2="95" />
+      <line class="line" x1="52" y1="68" x2="34" y2="80" />
+      <line class="line" x1="52" y1="68" x2="72" y2="80" />
+      <line class="line" x1="52" y1="95" x2="40" y2="128" />
+      <line class="line" x1="52" y1="95" x2="66" y2="128" />
+    </g>
+  `;
+
+  const frames = {
+    squat: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="155" cy="44" r="12" />
+          <line class="line" x1="155" y1="56" x2="155" y2="95" />
+          <line class="line" x1="155" y1="70" x2="130" y2="78" />
+          <line class="line" x1="155" y1="70" x2="180" y2="78" />
+          <line class="line" x1="155" y1="95" x2="144" y2="128" />
+          <line class="line" x1="155" y1="95" x2="168" y2="128" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="155" cy="58" r="12" />
+          <line class="line" x1="155" y1="70" x2="155" y2="102" />
+          <line class="line" x1="155" y1="78" x2="128" y2="84" />
+          <line class="line" x1="155" y1="78" x2="182" y2="84" />
+          <line class="line" x1="155" y1="102" x2="136" y2="128" />
+          <line class="line" x1="155" y1="102" x2="178" y2="128" />
+        </g>
+      `
+    },
+    push: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="154" cy="44" r="12" />
+          <line class="line" x1="154" y1="56" x2="154" y2="95" />
+          <line class="line" x1="154" y1="68" x2="132" y2="78" />
+          <line class="line" x1="154" y1="68" x2="176" y2="78" />
+          <line class="line" x1="154" y1="95" x2="142" y2="128" />
+          <line class="line" x1="154" y1="95" x2="167" y2="128" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="154" cy="44" r="12" />
+          <line class="line" x1="154" y1="56" x2="154" y2="95" />
+          <line class="line" x1="154" y1="68" x2="122" y2="70" />
+          <line class="line" x1="154" y1="68" x2="186" y2="70" />
+          <line class="line" x1="154" y1="95" x2="142" y2="128" />
+          <line class="line" x1="154" y1="95" x2="167" y2="128" />
+        </g>
+      `
+    },
+    lunge: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="154" cy="44" r="12" />
+          <line class="line" x1="154" y1="56" x2="154" y2="95" />
+          <line class="line" x1="154" y1="70" x2="134" y2="80" />
+          <line class="line" x1="154" y1="70" x2="174" y2="80" />
+          <line class="line" x1="154" y1="95" x2="136" y2="128" />
+          <line class="line" x1="154" y1="95" x2="180" y2="128" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="154" cy="54" r="12" />
+          <line class="line" x1="154" y1="66" x2="154" y2="98" />
+          <line class="line" x1="154" y1="76" x2="132" y2="84" />
+          <line class="line" x1="154" y1="76" x2="176" y2="84" />
+          <line class="line" x1="154" y1="98" x2="132" y2="128" />
+          <line class="line" x1="154" y1="98" x2="188" y2="122" />
+        </g>
+      `
+    },
+    core: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="136" cy="72" r="10" />
+          <line class="line" x1="146" y1="72" x2="186" y2="72" />
+          <line class="line" x1="186" y1="72" x2="198" y2="90" />
+          <line class="line" x1="186" y1="72" x2="198" y2="58" />
+          <line class="line" x1="146" y1="72" x2="130" y2="88" />
+          <line class="line" x1="146" y1="72" x2="130" y2="56" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="138" cy="76" r="10" />
+          <line class="line" x1="148" y1="76" x2="186" y2="74" />
+          <line class="line" x1="186" y1="74" x2="198" y2="92" />
+          <line class="line" x1="186" y1="74" x2="198" y2="60" />
+          <line class="line" x1="148" y1="76" x2="132" y2="90" />
+          <line class="line" x1="148" y1="76" x2="132" y2="60" />
+        </g>
+      `
+    },
+    cardio: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="154" cy="44" r="12" />
+          <line class="line" x1="154" y1="56" x2="154" y2="92" />
+          <line class="line" x1="154" y1="68" x2="134" y2="74" />
+          <line class="line" x1="154" y1="68" x2="176" y2="78" />
+          <line class="line" x1="154" y1="92" x2="136" y2="128" />
+          <line class="line" x1="154" y1="92" x2="178" y2="110" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="154" cy="40" r="12" />
+          <line class="line" x1="154" y1="52" x2="154" y2="88" />
+          <line class="line" x1="154" y1="64" x2="132" y2="76" />
+          <line class="line" x1="154" y1="64" x2="176" y2="70" />
+          <line class="line" x1="154" y1="88" x2="140" y2="108" />
+          <line class="line" x1="154" y1="88" x2="180" y2="128" />
+        </g>
+      `
+    },
+    back: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="154" cy="50" r="12" />
+          <line class="line" x1="154" y1="62" x2="154" y2="97" />
+          <line class="line" x1="154" y1="72" x2="128" y2="84" />
+          <line class="line" x1="154" y1="72" x2="180" y2="84" />
+          <line class="line" x1="154" y1="97" x2="142" y2="128" />
+          <line class="line" x1="154" y1="97" x2="168" y2="128" />
+          <line class="line accent" x1="120" y1="84" x2="190" y2="84" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="154" cy="52" r="12" />
+          <line class="line" x1="154" y1="64" x2="154" y2="98" />
+          <line class="line" x1="154" y1="76" x2="138" y2="82" />
+          <line class="line" x1="154" y1="76" x2="170" y2="82" />
+          <line class="line" x1="154" y1="98" x2="142" y2="128" />
+          <line class="line" x1="154" y1="98" x2="168" y2="128" />
+          <line class="line accent" x1="136" y1="82" x2="174" y2="82" />
+        </g>
+      `
+    },
+    generic: {
+      a: `
+        <g class="figure motion-a">
+          <circle class="line" cx="154" cy="44" r="12" />
+          <line class="line" x1="154" y1="56" x2="154" y2="95" />
+          <line class="line" x1="154" y1="68" x2="132" y2="80" />
+          <line class="line" x1="154" y1="68" x2="176" y2="80" />
+          <line class="line" x1="154" y1="95" x2="142" y2="128" />
+          <line class="line" x1="154" y1="95" x2="166" y2="128" />
+        </g>
+      `,
+      b: `
+        <g class="figure motion-b">
+          <circle class="line" cx="154" cy="48" r="12" />
+          <line class="line" x1="154" y1="60" x2="154" y2="98" />
+          <line class="line" x1="154" y1="72" x2="138" y2="82" />
+          <line class="line" x1="154" y1="72" x2="170" y2="82" />
+          <line class="line" x1="154" y1="98" x2="146" y2="128" />
+          <line class="line" x1="154" y1="98" x2="164" y2="128" />
+        </g>
+      `
+    }
+  };
+
+  const frame = frames[type] || frames.generic;
+
+  return `
+    <svg class="exercise-demo-svg exercise-demo-${type}" viewBox="0 0 220 150" role="img" aria-label="Animated exercise movement demo">
+      <rect class="panel" x="1" y="1" width="218" height="148" rx="12" ry="12"></rect>
+      <line class="floor" x1="18" y1="128" x2="202" y2="128"></line>
+      ${commonStart}
+      ${frame.a}
+      ${frame.b}
+    </svg>
+  `;
 }
 
 function getExerciseAnimationMarkup(exercise) {
   const model = getExerciseAnimationModel(exercise);
   return `
     <div class="exercise-animation-card exercise-animation-${model.type}">
-      <div class="exercise-animation-emoji">${model.emoji}</div>
+      ${getExerciseAnimationSvg(model.type)}
       <div class="exercise-animation-caption">${model.label}</div>
     </div>
   `;
@@ -649,7 +833,7 @@ function updateTimerDisplay() {
     const model = getExerciseAnimationModel(displayExercise);
     timerAnimation.className = `exercise-animation-card exercise-animation-${model.type}`;
     timerAnimation.innerHTML = `
-      <div class="exercise-animation-emoji">${model.emoji}</div>
+      ${getExerciseAnimationSvg(model.type)}
       <div class="exercise-animation-caption">${model.label}</div>
     `;
   }

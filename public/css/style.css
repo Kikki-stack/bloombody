@@ -1005,19 +1005,45 @@ body {
 .exercise-animation-card {
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   margin-bottom: 10px;
-  background: linear-gradient(145deg, #ffffff, var(--primary-pale));
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  background: linear-gradient(145deg, #ffffff, #f6fbff);
 }
 
-.exercise-animation-emoji {
-  font-size: 24px;
-  line-height: 1;
-  transform-origin: center;
-  animation: demoPulse 1.25s ease-in-out infinite;
+.exercise-demo-svg {
+  width: 100%;
+  max-height: 180px;
+  height: auto;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.exercise-demo-svg .panel {
+  fill: #f5f7fa;
+  stroke: #dde4ed;
+  stroke-width: 1.2;
+}
+
+.exercise-demo-svg .floor {
+  stroke: #cdd8e5;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.exercise-demo-svg .line {
+  fill: none;
+  stroke: #293241;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exercise-demo-svg .accent {
+  stroke: #7ca8d2;
+}
+
+.exercise-demo-svg .guide {
+  opacity: 0.45;
 }
 
 .exercise-animation-caption {
@@ -1028,46 +1054,22 @@ body {
   letter-spacing: 0.4px;
 }
 
-.exercise-animation-push .exercise-animation-emoji { animation: demoPush 1.2s ease-in-out infinite; }
-.exercise-animation-squat .exercise-animation-emoji { animation: demoSquat 1.1s ease-in-out infinite; }
-.exercise-animation-lunge .exercise-animation-emoji { animation: demoLunge 1.25s ease-in-out infinite; }
-.exercise-animation-core .exercise-animation-emoji { animation: demoCore 1.35s ease-in-out infinite; }
-.exercise-animation-cardio .exercise-animation-emoji { animation: demoCardio 0.8s ease-in-out infinite; }
-.exercise-animation-back .exercise-animation-emoji { animation: demoBack 1.2s ease-in-out infinite; }
-
-@keyframes demoPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+.exercise-demo-svg .motion-a {
+  animation: demoPoseA 1.6s ease-in-out infinite;
 }
 
-@keyframes demoPush {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(4px); }
+.exercise-demo-svg .motion-b {
+  animation: demoPoseB 1.6s ease-in-out infinite;
 }
 
-@keyframes demoSquat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
+@keyframes demoPoseA {
+  0%, 44% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
-@keyframes demoLunge {
-  0%, 100% { transform: translateX(0) scale(1); }
-  50% { transform: translateX(5px) scale(1.04); }
-}
-
-@keyframes demoCore {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(4deg); }
-}
-
-@keyframes demoCardio {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes demoBack {
-  0%, 100% { transform: translateX(0) rotate(0); }
-  50% { transform: translateX(-4px) rotate(-4deg); }
+@keyframes demoPoseB {
+  0%, 44% { opacity: 0; }
+  50%, 100% { opacity: 1; }
 }
 
 .mod-tag {
