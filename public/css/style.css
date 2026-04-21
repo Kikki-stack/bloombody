@@ -1002,6 +1002,74 @@ body {
   flex-wrap: wrap;
 }
 
+.exercise-animation-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: linear-gradient(145deg, #ffffff, var(--primary-pale));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exercise-animation-emoji {
+  font-size: 24px;
+  line-height: 1;
+  transform-origin: center;
+  animation: demoPulse 1.25s ease-in-out infinite;
+}
+
+.exercise-animation-caption {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.exercise-animation-push .exercise-animation-emoji { animation: demoPush 1.2s ease-in-out infinite; }
+.exercise-animation-squat .exercise-animation-emoji { animation: demoSquat 1.1s ease-in-out infinite; }
+.exercise-animation-lunge .exercise-animation-emoji { animation: demoLunge 1.25s ease-in-out infinite; }
+.exercise-animation-core .exercise-animation-emoji { animation: demoCore 1.35s ease-in-out infinite; }
+.exercise-animation-cardio .exercise-animation-emoji { animation: demoCardio 0.8s ease-in-out infinite; }
+.exercise-animation-back .exercise-animation-emoji { animation: demoBack 1.2s ease-in-out infinite; }
+
+@keyframes demoPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes demoPush {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+@keyframes demoSquat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+@keyframes demoLunge {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(5px) scale(1.04); }
+}
+
+@keyframes demoCore {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes demoCardio {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes demoBack {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  50% { transform: translateX(-4px) rotate(-4deg); }
+}
+
 .mod-tag {
   font-size: 12px;
   padding: 4px 10px;

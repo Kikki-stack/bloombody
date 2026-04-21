@@ -258,7 +258,7 @@ function showMsg(id, msg) {
   setTimeout(() => el.classList.remove('show'), 5000);
 }
 
-async function saveProfile() {
+async function saveProfile(buttonEl) {
   document.getElementById('profileError').classList.remove('show');
   document.getElementById('profileSuccess').classList.remove('show');
 
@@ -290,7 +290,11 @@ async function saveProfile() {
     measurement_unit: document.getElementById('pMeasurementUnit').value
   };
 
-  const btn = event.target;
+  const btn = buttonEl || document.querySelector('#profileFormCard .btn.btn-primary.btn-lg');
+  if (!btn) {
+    showMsg('profileError', 'Could not find save button. Please refresh and try again.');
+    return;
+  }
   btn.disabled = true;
   btn.textContent = 'Saving...';
 

@@ -351,6 +351,30 @@ function renderWeek() {
   content.appendChild(grid);
 }
 
+function getExerciseAnimationModel(exercise) {
+  const name = String(exercise?.name || '').toLowerCase();
+  const muscle = String(exercise?.muscle_group || '').toLowerCase();
+  const text = `${name} ${muscle}`;
+
+  if (/push|press|chest/.test(text)) return { type: 'push', emoji: '💪', label: 'Push Pattern Demo' };
+  if (/squat|leg|glute|hamstring|quad/.test(text)) return { type: 'squat', emoji: '🦵', label: 'Lower Body Demo' };
+  if (/lunge|split squat|step up/.test(text)) return { type: 'lunge', emoji: '🤸', label: 'Lunge Pattern Demo' };
+  if (/plank|core|abs|crunch|bird-dog/.test(text)) return { type: 'core', emoji: '🧘', label: 'Core Control Demo' };
+  if (/row|back|pull/.test(text)) return { type: 'back', emoji: '🏋️', label: 'Back/Pull Demo' };
+  if (/cardio|run|jog|march|jump|cycle|burpee|mountain climber/.test(text)) return { type: 'cardio', emoji: '🏃', label: 'Cardio Movement Demo' };
+  return { type: 'generic', emoji: '🏋️', label: 'Movement Demo' };
+}
+
+function getExerciseAnimationMarkup(exercise) {
+  const model = getExerciseAnimationModel(exercise);
+  return `
+    <div class="exercise-animation-card exercise-animation-${model.type}">
+      <div class="exercise-animation-emoji">${model.emoji}</div>
+      <div class="exercise-animation-caption">${model.label}</div>
+    </div>
+  `;
+}
+
 function openWorkoutModal(workout, weekNum) {
   const modal = document.getElementById('workoutModal');
   const title = document.getElementById('modalTitle');
@@ -376,6 +400,7 @@ function openWorkoutModal(workout, weekNum) {
       <div class="exercise-card">
         <div class="exercise-name">${i + 1}. ${ex.name}</div>
         <div class="exercise-muscle">${ex.muscle_group || ''}</div>
+        ${getExerciseAnimationMarkup(ex)}
         <div class="exercise-meta">
           <span class="badge badge-green">${TIMER_TOTAL_SETS} sets</span>
           <span class="badge badge-blue">${TIMER_REPS_PER_EXERCISE} reps</span>
@@ -618,6 +643,16 @@ function updateTimerDisplay() {
     timerState.phase === 'exercise-prep'
       ? `Coming up: ${displayExercise.description || 'Get ready for the next movement.'}`
       : (displayExercise.description || '');
+
+  const timerAnimation = document.getElementById('timerAnimation');
+  if (timerAnimation) {
+    const model = getExerciseAnimationModel(displayExercise);
+    timerAnimation.className = `exercise-animation-card exercise-animation-${model.type}`;
+    timerAnimation.innerHTML = `
+      <div class="exercise-animation-emoji">${model.emoji}</div>
+      <div class="exercise-animation-caption">${model.label}</div>
+    `;
+  }
 
   // Modifications
   const easierEl = document.getElementById('timerModEasier');
