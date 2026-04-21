@@ -584,7 +584,6 @@ function openWorkoutModal(workout, weekNum) {
       <div class="exercise-card">
         <div class="exercise-name">${i + 1}. ${ex.name}</div>
         <div class="exercise-muscle">${ex.muscle_group || ''}</div>
-        ${getExerciseAnimationMarkup(ex)}
         <div class="exercise-meta">
           <span class="badge badge-green">${TIMER_TOTAL_SETS} sets</span>
           <span class="badge badge-blue">${TIMER_REPS_PER_EXERCISE} reps</span>
@@ -827,16 +826,6 @@ function updateTimerDisplay() {
     timerState.phase === 'exercise-prep'
       ? `Coming up: ${displayExercise.description || 'Get ready for the next movement.'}`
       : (displayExercise.description || '');
-
-  const timerAnimation = document.getElementById('timerAnimation');
-  if (timerAnimation) {
-    const model = getExerciseAnimationModel(displayExercise);
-    timerAnimation.className = `exercise-animation-card exercise-animation-${model.type}`;
-    timerAnimation.innerHTML = `
-      ${getExerciseAnimationSvg(model.type)}
-      <div class="exercise-animation-caption">${model.label}</div>
-    `;
-  }
 
   // Modifications
   const easierEl = document.getElementById('timerModEasier');
