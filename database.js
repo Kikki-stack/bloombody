@@ -297,6 +297,26 @@ function addWeeklyCheckin(userId, week, mealPlanId, workoutPlanId, payload) {
   return checkin;
 }
 
+function deleteMealPlan(userId, planId) {
+  const db = loadDb();
+  const idx = db.meal_plans.findIndex(p => p.id === planId && p.user_id === userId);
+  if (idx === -1) return false;
+  db.meal_plans.splice(idx, 1);
+  db.meal_week_progress = db.meal_week_progress.filter(p => p.meal_plan_id !== planId);
+  saveDb();
+  return true;
+}
+
+function deleteWorkoutPlan(userId, planId) {
+  const db = loadDb();
+  const idx = db.workout_plans.findIndex(p => p.id === planId && p.user_id === userId);
+  if (idx === -1) return false;
+  db.workout_plans.splice(idx, 1);
+  db.workout_progress = db.workout_progress.filter(p => p.workout_plan_id !== planId);
+  saveDb();
+  return true;
+}
+
 module.exports = {
   getDb,
   initDatabase,
@@ -307,6 +327,7 @@ module.exports = {
   createMealPlan,
   getLatestMealPlan,
   getMealPlanHistory,
+  deleteMealPlan,
   createWorkoutPlan,
   getLatestWorkoutPlan,
   getWorkoutPlanById,
@@ -315,6 +336,7 @@ module.exports = {
   addWorkoutProgress,
   countWorkoutProgress,
   markWorkoutPlanCompleted,
+  deleteWorkoutPlan,
   getMealWeekProgress,
   findMealWeekProgress,
   addMealWeekProgress,

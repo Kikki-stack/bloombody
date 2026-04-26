@@ -7,7 +7,8 @@ const {
   getMealPlanHistory,
   getMealWeekProgress,
   findMealWeekProgress,
-  addMealWeekProgress
+  addMealWeekProgress,
+  deleteMealPlan
 } = require('../database');
 
 const router = express.Router();
@@ -255,6 +256,13 @@ router.get('/history', requireAuth, (req, res) => {
     created_at: plan.created_at
   }));
   res.json(plans);
+});
+
+router.delete('/current', requireAuth, (req, res) => {
+  const plan = getLatestMealPlan(req.session.userId);
+  if (!plan) return res.json({ success: true });
+  deleteMealPlan(req.session.userId, plan.id);
+  res.json({ success: true });
 });
 
 module.exports = router;

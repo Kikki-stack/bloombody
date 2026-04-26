@@ -106,6 +106,8 @@ function renderPlan() {
 
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('mealPlanArea').style.display = 'block';
+  const delBtn = document.getElementById('deletePlanBtn');
+  if (delBtn) delBtn.style.display = 'inline-flex';
 
   // Week tabs
   const tabNav = document.getElementById('weekTabNav');
@@ -650,6 +652,22 @@ async function logout() {
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
+}
+
+async function deleteCurrentPlan() {
+  if (!currentPlan?.id) return;
+  if (!confirm('Delete the current meal plan? This cannot be undone.')) return;
+  try {
+    const res = await fetch('/api/meals/current', { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete plan');
+    currentPlan = null;
+    document.getElementById('mealPlanArea').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('deletePlanBtn').style.display = 'none';
+    showToast('🗑️ Meal plan deleted.', 'success');
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+  }
 }
 
 init();

@@ -77,6 +77,7 @@
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="generateWorkoutPlan()">✨ Generate Workout Plan</button>
           <button class="btn btn-secondary" onclick="loadCurrentPlan()">📋 Load Current Plan</button>
+          <button class="btn btn-danger btn-sm" id="deletePlanBtn" style="display:none;" onclick="deleteCurrentPlan()">🗑️ Delete Plan</button>
           <span style="font-size:12px; color:var(--text-muted);">Generation takes ~20-40 seconds. Intensity comes from your profile (Dashboard).</span>
         </div>
       </div>

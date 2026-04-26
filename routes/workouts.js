@@ -9,7 +9,8 @@ const {
   findWorkoutProgress,
   addWorkoutProgress,
   countWorkoutProgress,
-  markWorkoutPlanCompleted
+  markWorkoutPlanCompleted,
+  deleteWorkoutPlan
 } = require('../database');
 
 const router = express.Router();
@@ -581,6 +582,13 @@ Return ONLY valid JSON with exactly the same structure as before (plan_name, ove
     console.error('Checkup error:', err.message);
     res.status(500).json({ error: 'Failed to generate updated plan. Please try again.' });
   }
+});
+
+router.delete('/current', requireAuth, (req, res) => {
+  const plan = getLatestWorkoutPlan(req.session.userId);
+  if (!plan) return res.json({ success: true });
+  deleteWorkoutPlan(req.session.userId, plan.id);
+  res.json({ success: true });
 });
 
 module.exports = router;

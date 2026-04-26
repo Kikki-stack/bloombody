@@ -141,6 +141,8 @@ function renderPlan() {
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('workoutPlanArea').style.display = 'block';
   document.getElementById('planOverview').style.display = 'block';
+  const delBtn = document.getElementById('deletePlanBtn');
+  if (delBtn) delBtn.style.display = 'inline-flex';
 
   // Plan overview
   document.getElementById('planName').textContent = currentPlan.plan_name || '4-Week Workout Plan';
@@ -1024,6 +1026,26 @@ async function logout() {
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
+}
+
+async function deleteCurrentPlan() {
+  if (!currentPlan?.id) return;
+  if (!confirm('Delete the current workout plan? Progress will be lost.')) return;
+  try {
+    const res = await fetch('/api/workouts/current', { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete plan');
+    currentPlan = null;
+    document.getElementById('workoutPlanArea').style.display = 'none';
+    document.getElementById('planOverview').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('weeklyCheckinCard').style.display = 'none';
+    document.getElementById('checkupBanner').style.display = 'none';
+    const delBtn = document.getElementById('deletePlanBtn');
+    if (delBtn) delBtn.style.display = 'none';
+    showToast('🗑️ Workout plan deleted.', 'success');
+  } catch (err) {
+    showToast('❌ ' + err.message, 'error');
+  }
 }
 
 // Close modals on overlay click
